@@ -192,6 +192,8 @@ function renderBoard(){
   rowsEl.innerHTML = '';
   if (!starts.length){ rowsEl.appendChild(el('span', 'hour wait', 'В этот день мы не принимаем')); return; }
   if (st === 'err'){ rowsEl.appendChild(el('p', 'note', 'Не удалось загрузить расписание. Позвоните: ' + SHOP.phone)); return; }
+  // симметрия: до 10 часов в одну строку, больше — две равные строки (не меньше 6 колонок, чтобы редкие часы не растягивались)
+  rowsEl.style.setProperty('--cols', String(starts.length <= 10 ? Math.max(starts.length, 6) : Math.ceil(starts.length / 2)));
   starts.forEach(function(m){
     var t = hm(m), past = k === 0 && m < nowMin() + 30, x;
     var free = st === 'ok' && !past && freeAt(iso, d, m, DUR);

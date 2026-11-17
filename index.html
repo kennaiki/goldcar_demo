@@ -88,7 +88,9 @@ main section,main .board{margin-bottom:84px}
 .tabs{display:flex;gap:6px;background:var(--surface);padding:5px;border-radius:999px;overflow-x:auto;scrollbar-width:none}
 .tabs button{border:0;background:none;cursor:pointer;font-weight:500;font-size:14px;min-height:40px;padding:8px 16px;border-radius:999px;color:var(--mute);white-space:nowrap}
 .tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.hours{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+/* часы выстроены симметрично: одна строка (до 10 часов) или две равные, неполная последняя строка по центру; число колонок задаёт app.js в --cols */
+.hours{--hg:10px;display:flex;flex-wrap:wrap;justify-content:center;gap:var(--hg)}
+.hours > .hour{flex:0 0 calc((100% - (var(--cols,6) - 1) * var(--hg)) / var(--cols,6));min-width:0}
 .hour{border:0;font:600 18px var(--display);letter-spacing:.5px;padding:16px 0;border-radius:var(--rs);text-align:center;background:transparent;color:var(--mute);opacity:.75}
 .hour.busy{text-decoration:line-through}
 .hour.past{opacity:.4} /* прошедший час: бледный, без зачёркивания — не путать с занятым */
@@ -96,13 +98,13 @@ main section,main .board{margin-bottom:84px}
 .hour.free{background:var(--surface);color:var(--accent-t);cursor:pointer;opacity:1;transition:transform .2s,background .2s,color .2s}
 .hour.free:hover,.hour.free:focus-visible{background:var(--accent);color:var(--on-accent);transform:translateY(-3px)}
 .board .note{margin-top:14px;color:var(--mute);font-size:14px}
-.hours > p,.hours > .wait:only-child{grid-column:1/-1;text-align:left;padding:16px 4px;margin:0;font:400 16px var(--text);text-decoration:none}
-@media(max-width:600px){.board{padding:20px 16px}.hours{grid-template-columns:repeat(3,1fr)}}
+.hours > p,.hours > .wait:only-child{flex:1 1 100%;text-align:left;padding:16px 4px;margin:0;font:400 16px var(--text);text-decoration:none}
+@media(max-width:600px){.board{padding:20px 16px}.hours > .hour{flex-basis:calc((100% - 3 * var(--hg)) / 4)}}
 /* вид табло: rows — прямоугольные клетки с жирной рамкой, bar — сплошная шкала */
 [data-bstyle="rows"] .hour{border:var(--bw) solid var(--ink);border-radius:var(--rs);opacity:1;color:var(--mute)}
 [data-bstyle="rows"] .hour.free{border-color:var(--ink)}
 [data-bstyle="rows"] .hour.past,[data-bstyle="rows"] .hour.busy{border-color:var(--line)}
-[data-bstyle="bar"] .hours{gap:0;border:var(--bw) solid var(--ink);border-radius:var(--rs);overflow:hidden;background:var(--surface)}
+[data-bstyle="bar"] .hours{--hg:0px;border:var(--bw) solid var(--ink);border-radius:var(--rs);overflow:hidden;background:var(--surface)}
 [data-bstyle="bar"] .hour{border-radius:0;border-right:var(--bw) solid var(--line);padding:18px 0}
 [data-bstyle="bar"] .hour.free{background:var(--accent);color:var(--on-accent)}
 [data-bstyle="bar"] .hour.free:hover{background:var(--ink);color:var(--bg);transform:none}
@@ -306,7 +308,7 @@ h2::before{content:"";display:block;width:56px;height:5px;background:var(--accen
 .facts b{font-size:34px}
 .board{padding:34px}
 .board h2{font-size:30px}
-.hours{gap:12px}
+.hours{--hg:12px}
 .hour{font-size:17px;color:#8f8777;padding:16px 0;border-radius:12px}
 .hour.free{background:transparent;border:2px solid var(--accent);color:var(--accent);opacity:1}
 .hour.free:hover,.hour.free:focus-visible{background:var(--accent);color:var(--on-accent);transform:none}
