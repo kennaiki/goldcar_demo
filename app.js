@@ -192,8 +192,6 @@ function renderBoard(){
   rowsEl.innerHTML = '';
   if (!starts.length){ rowsEl.appendChild(el('span', 'hour wait', 'В этот день мы не принимаем')); return; }
   if (st === 'err'){ rowsEl.appendChild(el('p', 'note', 'Не удалось загрузить расписание. Позвоните: ' + SHOP.phone)); return; }
-  // симметрия: до 10 часов в одну строку, больше — две равные строки (не меньше 6 колонок, чтобы редкие часы не растягивались)
-  rowsEl.style.setProperty('--cols', String(starts.length <= 10 ? Math.max(starts.length, 6) : Math.ceil(starts.length / 2)));
   starts.forEach(function(m){
     var t = hm(m), past = k === 0 && m < nowMin() + 30, x;
     var free = st === 'ok' && !past && freeAt(iso, d, m, DUR);
@@ -209,6 +207,23 @@ function renderBoard(){
   if (st === 'wait') loadDay(iso, function(){ if (boardDay === k) renderBoard(); });
 }
 if (HAS_BOOK && tabs){
+  // лента часов: на узком экране листается колёсиком мыши и перетаскиванием
+  rowsEl.addEventListener('wheel', function(e){
+    var max = rowsEl.scrollWidth - rowsEl.clientWidth;
+    if (max <= 0 || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    if ((e.deltaY < 0 && rowsEl.scrollLeft <= 0) || (e.deltaY > 0 && rowsEl.scrollLeft >= max)) return;
+    e.preventDefault(); rowsEl.scrollLeft += e.deltaY;
+  }, {passive: false});
+  (function(){
+    var down = false, sx = 0, sl = 0, moved = false;
+    rowsEl.addEventListener('pointerdown', function(e){ if (e.pointerType !== 'mouse' || e.button !== 0) return; down = true; moved = false; sx = e.clientX; sl = rowsEl.scrollLeft; });
+    window.addEventListener('pointermove', function(e){
+      if (!down) return; var dx = e.clientX - sx;
+      if (!moved && Math.abs(dx) > 5){ moved = true; rowsEl.classList.add('drag'); }
+      if (moved) rowsEl.scrollLeft = sl - dx;
+    });
+    window.addEventListener('pointerup', function(){ if (!down) return; down = false; setTimeout(function(){ rowsEl.classList.remove('drag'); }, 0); });
+  })();
   ['Сегодня', 'Завтра', 'Послезавтра'].forEach(function(name, k){
     var b = el('button', '', name); b.type = 'button';
     b.setAttribute('aria-label', name + ', ' + dayAt(k).toLocaleDateString('ru-RU', {day: 'numeric', month: 'long'}));
