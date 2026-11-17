@@ -301,9 +301,19 @@ h2::before{content:"";display:block;width:56px;height:5px;background:var(--accen
 .facts{display:flex;gap:34px;flex-wrap:wrap;list-style:none;padding:0;margin:0 0 32px}
 .facts li{font-size:14px;color:#d8cfbd;letter-spacing:.04em}
 .facts b{display:block;font:600 42px/1 var(--display);color:var(--accent);margin-bottom:4px}
+/* цифры мягким шрифтом: у Cormorant «старые» цифры в расписании и ценах выглядят рваными */
+.hour,.slot,.plan .price,.facts b,.sum b,.dd button b{font-family:Manrope,system-ui,sans-serif;font-weight:600;letter-spacing:0}
+.facts b{font-size:34px}
 .board{padding:34px}
 .board h2{font-size:30px}
-.hour{font-size:20px;color:#8f8777}
+.hours{gap:12px}
+.hour{font-size:17px;color:#8f8777;padding:16px 0;border-radius:12px}
+.hour.free{background:transparent;border:2px solid var(--accent);color:var(--accent);opacity:1}
+.hour.free:hover,.hour.free:focus-visible{background:var(--accent);color:var(--on-accent);transform:none}
+.hour.past,.hour.busy,.hour.wait{border:2px solid transparent}
+.slot{border-radius:12px}
+.tabs button{border-radius:12px}
+.tabs{border-radius:14px}
 [data-plans="list"] .plan h3{font-size:30px}
 [data-plans="list"] .plan .price{font-size:38px;color:var(--accent)}
 [data-plans="list"] .plan .price .from,[data-plans="list"] .plan .price .cur{color:var(--accent);opacity:.8}
@@ -317,7 +327,7 @@ h2::before{content:"";display:block;width:56px;height:5px;background:var(--accen
 
 </style>
 </head>
-<body data-plans="list" data-bstyle="bar">
+<body data-plans="list" data-bstyle="pills">
 <a class="skip" href="#tablo">Перейти к записи</a>
 <div class="demo" role="note">Это пример сайта для «Gold Car», а не официальный сайт заведения. Пользуйтесь тестовыми данными.</div>
 
